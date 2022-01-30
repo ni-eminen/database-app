@@ -20,5 +20,4 @@ def index():
 
 @app.route('/quiz/<string:quizname>')
 def quiz(quizname):
-
     return render_template('test.html')

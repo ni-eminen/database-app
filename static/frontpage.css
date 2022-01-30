@@ -21,9 +21,9 @@ h2 {
 }
 
 .quizCard {
-    margin: 2em;
+    margin: 2em 0;
     display: flex;
-    width: 100%;
+    max-width: 100%;
     text-align: center;
     border-radius: 10px;
     box-shadow: 3px 6px 5px 5px #888888;
