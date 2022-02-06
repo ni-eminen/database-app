@@ -11,6 +11,7 @@ Quiz app for University of Helsinki's database project course.
 run the following commands:
 
 ### setting up
+	source ./venv/bin/activate
 	pip install -r requirements.txt
 	psql < schema.sql
 
