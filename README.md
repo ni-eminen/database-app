@@ -14,6 +14,7 @@ run the following commands:
 	source ./venv/bin/activate
 	pip install -r requirements.txt
 	psql < schema.sql
+	psql < quizes.sql
 
 ### run flask
 	[FLASK_DEBUG=1] flask run
