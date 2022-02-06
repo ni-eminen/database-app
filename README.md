@@ -1,7 +1,7 @@
 # Quiz app
 Quiz app for University of Helsinki's database project course.
 
-## Functionalities
+## Functionalities (to be)
 - Create a user
 - Selection of Quiz's
 - Highscore tracking both global and user based
