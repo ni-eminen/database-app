@@ -34,8 +34,8 @@ def quiz(quizname):
         print(question)
     for answer in answers:
         print(answer)
-    # if questions:
-    #     return render_template('quiz_not_ready.html', quizname=quizname)
+    if len(questions) == 0:
+        return render_template('quiz_not_ready.html', quizname=quizname)
     return render_template('quiz.html', quizname=quizname, questions=questions, answers=answers, answerslen=len(answers),
                            questionslen=len(questions))
 
