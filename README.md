@@ -6,7 +6,7 @@ Quiz app for University of Helsinki's database project course.
 - Selection of Quiz's
 - Highscore tracking both global and user based
 
-## Install & running
+## Install & run
 
 run the following commands:
 
