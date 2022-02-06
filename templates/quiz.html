@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/quiz.css">
+    <title>{{quizname}}</title>
+</head>
+<body>
+    {%for i in range(0, questionslen)%}
+        <div class="quiz">
+            <div class="question">
+                <h1>
+                    {{questions[i][0]}}
+                </h1>
+            </div>
+            {%for j in range(0, 4)%}
+            <div class="choice">
+                <h2>{{answers[j][0]}}</h2>
+            </div>
+            {%endfor%}
+        </div>
+    {%endfor%}
+</body>
+</html>

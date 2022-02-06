@@ -25,7 +25,7 @@ def quiz(quizname):
     questions_query = f"select questions.question_string from quizes, questions where name='{quizname}' " \
                                                                                 f"AND questions.quiz_id=quizes.id;"
     answers_query = f"select answers.answer_string, answers.is_correct from answers, quizes, questions where " \
-                    f"quizes.name='{quizname}' and questions.quiz_id=quizes.id and answers.question_id=question_id;"
+                    f"quizes.name='{quizname}' and questions.quiz_id=quizes.id and answers.question_id=questions.id;"
     questions = db.session.execute(questions_query).fetchall()
     answers = db.session.execute(answers_query).fetchall()
     print(questions_query)
@@ -34,5 +34,8 @@ def quiz(quizname):
         print(question)
     for answer in answers:
         print(answer)
-    return render_template('test.html', quizname=quizname, questions=questions)
+    # if questions:
+    #     return render_template('quiz_not_ready.html', quizname=quizname)
+    return render_template('quiz.html', quizname=quizname, questions=questions, answers=answers, answerslen=len(answers),
+                           questionslen=len(questions))
 
