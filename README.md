@@ -1,6 +1,8 @@
 # Quiz app
 Quiz app for University of Helsinki's database project course.
 
+[heroku](https://matoskni-database.herokuapp.com/)
+
 ## Functionalities (to be)
 - Create a user
 - Selection of Quiz's
