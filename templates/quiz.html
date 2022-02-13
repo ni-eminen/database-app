@@ -5,22 +5,36 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/quiz.css">
+    <script src="../static/quiz.js"></script>
     <title>{{quizname}}</title>
 </head>
 <body>
-    {%for i in range(0, questionslen)%}
-        <div class="quiz">
-            <div class="question">
-                <h1>
-                    {{questions[i][0]}}
-                </h1>
-            </div>
-            {%for j in range(0, 4)%}
-            <div class="choice">
-                <h3>{{answers[i*4+j][0]}}</h3>
-            </div>
-            {%endfor%}
+    <div id='topbar'>
+        <div style="margin: 0 auto; width: 640px; display: block;">
+            <h1 style="color: white; letter-spacing: .17em; margin-left: 2px;">{{quizname}}</h1>
         </div>
-    {%endfor%}
+    </div>
+    <div class="quiz">
+        {%for i in range(0, questionslen)%}
+                <div class="question">
+                    <h1>
+                        {{questions[i][0]}}
+                    </h1>
+                </div>
+                {%for j in range(0, 4)%}
+                <div onclick="answer('{{questions[i][0]}}', '{{answers[i*4+j][0]}}');" class="choice">
+                    <h3>{{answers[i*4+j][0]}}</h3>
+                </div>
+                {%endfor%}
+        {%endfor%}
+        <a>
+            <button onclick="submit()" id='submitButton'>
+                Submit!
+            </button>
+        </a>
+    </div>
+    <script>
+        setQuizName('{{quizname}}')
+    </script>
 </body>
 </html>

@@ -3,6 +3,11 @@ body {
     padding: 1em 0;
 }
 
+a {
+    text-decoration: inherit;
+    color: inherit;
+}
+
 #content-div {
     width: 640px;
     margin: 0 auto;
