@@ -1,6 +1,6 @@
 from cmd import IDENTCHARS
 from flask import Flask
-from flask import redirect, render_template, request, jsonify
+from flask import redirect, render_template, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 import random
@@ -13,8 +13,31 @@ from Question import Question
 app = Flask(__name__)
 CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 
+# login
+
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    username = request.form["username"]
+    password = request.form["password"]
+    # check pass
+    session["username"] = username
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    del session["username"]
+    return redirect("/")
+
+@app.route('/loginpage', methods=['GET', 'POST'])
+def loginpage():
+  print('username: ', request.form.get('username'))
+  return render_template('login.html')
+
+
+# general
 
 @app.route("/")
 def index():
@@ -45,6 +68,12 @@ def quiz(quizname):
 
     return render_template('quiz.html', quizname=quizname, qna=qna, questions=questions, answers=answers, answerslen=len(answers),
                             questionslen=len(questions))
+
+@app.route('/quiz/results/<string:id>')
+def result(id):
+    score = db.session.execute(f'select score from scores where id={id};').fetchone()[0]
+    return render_template('results.html', score = score)
+
 
 @app.route('/quiz/submit', methods = ['POST', 'GET'])
 def submit():
@@ -88,12 +117,6 @@ def submit():
     print('scores after insertr',db.session.execute('select * from scores;').fetchall())
     db.session.commit()
     return jsonify(id=id)
-
-@app.route('/quiz/results/<string:id>')
-def result(id):
-    score = db.session.execute(f'select score from scores where id={id};').fetchone()[0]
-    return render_template('results.html', score = score)
-
 
 
 # db functions

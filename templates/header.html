@@ -1,7 +1,7 @@
-{% macro header(quizname) -%}
-<div id='topbar'>
+{% macro header(page, title='') -%}
+<div id='topbar' style="background-color: #ff928f; height: 3em">
   <div style="margin: 0 auto; width: 640px; display: block;">
-      <h1 style="color: white; letter-spacing: .17em; margin-left: 2px;">{{quizname}}</h1>
+      <h1 style="color: white; letter-spacing: .17em; margin-left: 2px;"> Quizbase - {{page}}</h1>
   </div>
 </div>
 {%- endmacro %}
