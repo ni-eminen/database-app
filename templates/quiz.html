@@ -1,3 +1,4 @@
+{% import 'header.html' as header %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +11,7 @@
     <title>{{quizname}}</title>
 </head>
 <body>
-    <div id='topbar'>
-        <div style="margin: 0 auto; width: 640px; display: block;">
-            <h1 style="color: white; letter-spacing: .17em; margin-left: 2px;">{{quizname}}</h1>
-        </div>
-    </div>
+    {{ header.header(quizname) }}
     <div class="quiz">
         {%for i in range(0, qna|length)%}
                 <div class="question">
