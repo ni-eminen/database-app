@@ -18,6 +18,7 @@ class Questions:
         self.questions.append(question)
         return True
 
+    # returns true if the given answer is correct to the given question
     def is_correct(self, question, answer):
         question = list(filter(lambda x: x.question_string == question, self.questions))[0]
         return question.is_correct(answer)

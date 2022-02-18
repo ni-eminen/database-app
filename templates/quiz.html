@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/quiz.css">
     <script src="../static/quiz.js"></script>
+    <script src="{{ url_for('static', filename='jquery-3.6.0.slim.min.js') }}"></script>
     <title>{{quizname}}</title>
 </head>
 <body>
@@ -15,17 +16,21 @@
         </div>
     </div>
     <div class="quiz">
-        {%for i in range(0, questionslen)%}
+        {%for i in range(0, qna|length)%}
                 <div class="question">
                     <h1>
-                        {{questions[i][0]}}
+                        {{qna[i][0]}}
                     </h1>
                 </div>
-                {%for j in range(0, 4)%}
-                <div onclick="answer('{{questions[i][0]}}', '{{answers[i*4+j][0]}}');" class="choice">
-                    <h3>{{answers[i*4+j][0]}}</h3>
+                <form>
+                <div class="radio-group">
+                        {%for j in range(0, (qna[i]|length) - 1)%}
+                        <div onclick="answer('{{qna[i][0]}}', '{{qna[i][j+1]}}');" class="radio">
+                            <h3>{{qna[i][j+1]}}</h3>
+                        </div>
+                        {%endfor%}
                 </div>
-                {%endfor%}
+                </form>
         {%endfor%}
         <a>
             <button onclick="submit()" id='submitButton'>
@@ -35,6 +40,16 @@
     </div>
     <script>
         setQuizName('{{quizname}}')
+        console.log('test');
+
+        $('.radio-group .radio').click(function(){
+        $(this).parent().find('.radio').removeClass('selected');
+        $(this).addClass('selected');
+        // var val = $(this).attr('data-value');
+        // //alert(val);
+        // $(this).parent().find('input').val(val);
+    });
     </script>
+
 </body>
 </html>

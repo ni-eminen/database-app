@@ -1,24 +1,23 @@
+from cmd import IDENTCHARS
 from flask import Flask
 from flask import redirect, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 import random
 
+from flask_cors import CORS
+
 from Questions import Questions
 from Question import Question
 
 app = Flask(__name__)
+CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 db = SQLAlchemy(app)
 
 
 @app.route("/")
 def index():
-    # db.session.execute("INSERT INTO visitors (time) VALUES (NOW())")
-    # db.session.commit()
-    # result = db.session.execute("SELECT COUNT(*) FROM visitors")
-    # counter = result.fetchone()[0]
-
     quizes = db.session.execute('select * from quizes;').fetchall()
     print('-----------------', quizes)
     return render_template("frontpage.html", quizes=quizes, len=len(quizes))
@@ -26,21 +25,25 @@ def index():
 
 @app.route('/quiz/<string:quizname>')
 def quiz(quizname):
-    questions_query = f"select questions.question_string from quizes, questions where name='{quizname}' " \
-                                                                                f"AND questions.quiz_id=quizes.id;"
-    answers_query = f"select answers.answer_string from answers, quizes, questions where " \
-                    f"quizes.name='{quizname}' and questions.quiz_id=quizes.id and answers.question_id=questions.id;"
-    questions = db.session.execute(questions_query).fetchall()
-    answers = db.session.execute(answers_query).fetchall()
-    print(questions_query)
-    print(questions)
-    for question in questions:
-        print(question)
-    for answer in answers:
-        print(answer)
+    questions = get_questions_with_answer_count(quizname)
+    answers = get_answers(quizname)
+
     if len(questions) == 0:
-        return render_template('quiz_not_ready.html', quizname=quizname)
-    return render_template('quiz.html', quizname=quizname, questions=questions, answers=answers, answerslen=len(answers),
+      return render_template('quiz_not_ready.html', quizname=quizname)
+    
+    # qna will be and array of arrays, each sub array represents a question and its answers, each node in string format
+    qna = []
+
+    # for each question, add the question_string into an array, then append that array 
+    # with the questions that have the appropriate question id
+    for q in questions:
+      arr = [q[0]]
+      for a in answers:
+        if q[1] == a[1]:
+          arr.append(a[0])
+      qna.append(arr)
+
+    return render_template('quiz.html', quizname=quizname, qna=qna, questions=questions, answers=answers, answerslen=len(answers),
                             questionslen=len(questions))
 
 @app.route('/quiz/submit', methods = ['POST', 'GET'])
@@ -65,6 +68,7 @@ def submit():
         a = body[q]     # answer
         if a in answer_list:
             continue
+
         answer_list.append(a)
 
         if questions.is_correct(q, body[q]):
@@ -82,13 +86,12 @@ def submit():
     print(id)
     db.session.execute(f'INSERT INTO scores (id, score) VALUES ({id}, {score});')
     print('scores after insertr',db.session.execute('select * from scores;').fetchall())
-    db.session.commit();
+    db.session.commit()
     return jsonify(id=id)
 
 @app.route('/quiz/results/<string:id>')
 def result(id):
-    score = db.session.execute('select score from scores;').fetchone()[0]
-    print(score)
+    score = db.session.execute(f'select score from scores where id={id};').fetchone()[0]
     return render_template('results.html', score = score)
 
 
@@ -97,7 +100,12 @@ def result(id):
 
 def get_questions(quizname):
     questions_query = f"select questions.question_string from quizes, questions where name='{quizname}' " \
-                                                                            f"AND questions.quiz_id=quizes.id;"
+                      f"AND questions.quiz_id=quizes.id;"
+    return db.session.execute(questions_query).fetchall()
+
+def get_questions_with_answer_count(quizname):
+    questions_query =   f"select questions.question_string, questions.id, count(*) from quizes, questions, answers where"\
+                        f" questions.id=answers.question_id and quizes.name='{quizname}' group by questions.question_string, questions.id;"
     return db.session.execute(questions_query).fetchall()
 
 def get_correct_answers(quizname):
@@ -106,6 +114,9 @@ def get_correct_answers(quizname):
     return db.session.execute(answers_query).fetchall()
 
 def get_answers(quizname):
-    answers_query = f"select answers.answer_string from answers, quizes, questions where " \
+    answers_query = f"select answers.answer_string, answers.question_id from answers, quizes, questions where " \
                     f"quizes.name='{quizname}' and questions.quiz_id=quizes.id and answers.question_id=questions.id;"
     return db.session.execute(answers_query).fetchall()
+
+def get_choice_count_for_question(question_id):
+    query = f"SELECT COUNT(*) FROM answers WHERE answer.id={question_id}"

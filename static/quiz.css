@@ -99,3 +99,25 @@ h1 {
     background-color: #0064bd;
     box-shadow: none;
 }
+
+.radio {
+    margin: 1em auto;
+    display: block;
+    max-width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 3px 6px 5px 5px #888888;
+    padding: .5em 1em;
+    overflow: hidden;
+    transition: all .1s ease-in-out;
+    background-color: rgb(65, 183, 223);
+}
+
+.radio.selected{
+    background-color: rgb(0, 95, 173);
+}
+
+.radio:hover {
+    transform: scale(1.025);
+    cursor: pointer;
+}

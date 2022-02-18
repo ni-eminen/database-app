@@ -15,7 +15,7 @@ const answer = (question, answer) => {
         ...answers,
         [question]: answer
     }
-    // console.log(answers)
+    console.log(answers)
     // console.log(answers[question])
 }
 
@@ -40,4 +40,12 @@ const submit = async () => {
     console.log('response', response)
     window.location.replace(`http://localhost:5000/quiz/results/${response.id}`);
 }
+
+$('.radio-group .radio').click(function(){
+    $(this).parent().find('.radio').removeClass('selected');
+    $(this).addClass('selected');
+    // var val = $(this).attr('data-value');
+    // //alert(val);
+    // $(this).parent().find('input').val(val);
+});
 
