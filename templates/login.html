@@ -6,16 +6,19 @@
 <link rel="stylesheet" href="../static/login.css">
 </head>    
 <body>    
-    <form action="/login">
-        <div class="container">   
-          <h1> Quizbase login: </h1>
-            <label>Username: </label>   
-            <input type="text" placeholder="Enter Username" value="test" name="username" required>  
-            <label>Password: </label>   
-            <input type="password" placeholder="Enter Password" name="password" required>  
-            <button type="submit">Login</button>   
-            <button type="button" class="cancelbtn">Cancel</button>
-        </div>   
-    </form>     
+  <form action="/login" method=post>
+      <div class="container">   
+        <!-- <h1> Quizbase login: </h1>
+          <label>Username: </label>   
+          <input type="text" placeholder="Enter Username" value="test" name="username" required>  
+          <label>Password: </label>   
+          <input type="password" placeholder="Enter Password" name="password" required>  
+          <button type="submit">Login</button>   
+          <button type="button" class="cancelbtn">Cancel</button> -->
+          {{form.username}}
+          {{form.password}}
+          {{form.submit}}
+      </div>   
+  </form>     
 </body>     
 </html>  
