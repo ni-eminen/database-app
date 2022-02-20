@@ -1,26 +1,21 @@
+{% from "macros.html" import header %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../static/frontpage.css">
     <script src="../static/frontpage.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../static/frontpage.css">
     <title>Quizbase</title>
 </head>
 <body>
-    <div id='topbar'>
-        <div style="margin: 0 auto; width: 640px; display: block;">
-            <h1 style="color: white; letter-spacing: .17em; margin-left: 2px;">{{quizname}}</h1>
-        </div>
-    </div>
-    {% if current_user.is_authenticated %}
-    <h3>You are logged in as {{current_user.username}}</h3>
-    {% else %}
-        <h3>You are not logged in</h3>
-    {% endif %}
+    {{header("Frontpage", current_user)}}
     <div id='content-div'>
-        <h1 style='text-align: center;'>Quizbase</h1>
         {%for i in range(0, len)%}
             <div id='quizList'>
                 <a href="/quiz/{{quizes[i][3]}}">

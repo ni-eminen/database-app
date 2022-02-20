@@ -1,12 +1,18 @@
-from cmd import IDENTCHARS
+from curses import REPORT_MOUSE_POSITION
 from flask import Flask, redirect, render_template, request, jsonify, session
 from urllib.parse import urlparse, urljoin
 import flask as flask
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 import random
-from flask_login import LoginManager, UserMixin, login_user, current_user
+
+# flask plugins
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user 
 from flask_cors import CORS
+from flask_bootstrap import Bootstrap
+
+# user authentication
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -15,19 +21,19 @@ from wtforms.validators import DataRequired
 # user classes
 from Questions import Questions
 from Question import Question
-
 from User import User
 
 app = Flask(__name__)
 login_manager = LoginManager()
 CORS(app)
+Bootstrap(app)
 login_manager.init_app(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 
 
-# LgoinForm class
+# LoginForm class
 class LoginForm(FlaskForm):
     username = StringField('Username')
     password = PasswordField('Password')
@@ -37,31 +43,29 @@ class LoginForm(FlaskForm):
 
 @app.route('/loginpage', methods=['GET', 'POST'])
 def login_page():
-  # Here we use a class of some kind to represent and validate our
-  # client-side form data. For example, WTForms is a library that will
-  # handle this for us, and we use a custom LoginForm to validate.
-  print('\n\n\n\n')
   form = LoginForm()
-  # if form.validate_on_submit():
-  #     # Login and validate the user.
-  #     # user should be an instance of your `User` class
-  #     print('logged in succesfully?: ', login_user(User(username='root', email='root')))
-
-  #     flask.flash('Logged in successfully.')
-
-  #     next = flask.request.args.get('next')
-  #     # is_safe_url should check if the url is safe for redirects.
-  #     # See http://flask.pocoo.org/snippets/62/ for an example.
-  #     if not is_safe_url(next):
-  #         return flask.abort(400)
-
-      # return flask.redirect(next or flask.url_for('frontpage.html'))
   return flask.render_template('login.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
   #authentication
-  print('success login:', login_user(User(request.form['username'], 'fake@email.com')))
+  username = request.form.get('username')
+  password = request.form.get('password')
+
+  user = db.session.execute(f"select * from users where username='{username}';").fetchone()
+  print('\n\n\n', user, '\n\n\n')
+
+  password_hash = generate_password_hash(password, method='sha256')
+  create_user(username, password)
+
+  print('success login:', login_user(User(request.form['username'])))
+  return redirect('/')
+
+@app.route("/logout")
+@login_required
+def logout():
+  print(current_user.is_authenticated)
+  logout_user()
   return redirect('/')
 
 
@@ -71,15 +75,6 @@ def is_safe_url(target):
     return test_url.scheme in ('http', 'https') and \
           ref_url.netloc == test_url.netloc
 
-@app.route("/logout")
-def logout():
-  del session["username"]
-  return redirect("/")
-
-@app.route('/loginpage', methods=['GET', 'POST'])
-def loginpage():
-  print('username: ', request.form.get('username'))
-  return render_template('login.html')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -192,3 +187,6 @@ def get_answers(quizname):
 
 def get_choice_count_for_question(question_id):
   query = f"SELECT COUNT(*) FROM answers WHERE answer.id={question_id}"
+
+def create_user(username, password):
+  pass

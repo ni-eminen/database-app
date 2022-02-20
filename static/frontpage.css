@@ -1,3 +1,8 @@
+
+html {
+    padding: 0;
+    margin: 0;
+}
 body {
     margin: 0;
     padding: 1em 0;
@@ -23,6 +28,10 @@ h2 {
     display: inline-block;
     vertical-align: middle;
     margin: .3em;
+}
+
+.right {
+    text-align: right;
 }
 
 .quizCard {
