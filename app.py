@@ -174,7 +174,9 @@ def submit():
 
   print('scores after insertr',db.session.execute('select * from scores;').fetchall())
   db.session.commit()
-  return jsonify(id=response.fetchone()[0])
+  response = jsonify(id=response.fetchone()[0])
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
 
 
 @app.route('/profile')
