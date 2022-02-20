@@ -9,7 +9,7 @@ from database import Database
 
 # flask plugins
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user 
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_bootstrap import Bootstrap
 
 # user authentication
@@ -133,6 +133,7 @@ def result(id):
 
 
 @app.route('/quiz/submit', methods = ['POST', 'GET'])
+@cross_origin()
 def submit():
   body = request.form
   quizname = body['quizname']
