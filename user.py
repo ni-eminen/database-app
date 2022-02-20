@@ -8,15 +8,10 @@ class User(UserMixin):
     self.username = username
     self.id = id
 
-    id = engine.execute(f"SELECT id FROM users WHERE username='root';").fetchone()[0]
-
-    print("\n\n\n\n\n\n\n", id, "\n\n\n\n\n\n\n")
-
 
   @staticmethod
   def get(user_id):
     # get user from database
-    print('reload user id\n\n\n\n', user_id)
     db_user = engine.execute(f"SELECT * FROM users WHERE id='{user_id}'").fetchone()
     user = User(db_user[1], db_user[0])
     return user
