@@ -1,3 +1,4 @@
+import sys
 from curses import REPORT_MOUSE_POSITION
 from flask import Flask, flash, redirect, render_template, request, jsonify, session
 from urllib.parse import urlparse, urljoin
@@ -18,10 +19,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 
+sys.path.insert(0, '/home/matias/codeprojects/tsoha/harkka/classes')
+
 # user classes
-from questions import Questions
-from question import Question
-from user import User
+from classes.questions import Questions
+from classes.question import Question
+from classes.user import User
 
 # app object
 app = Flask(__name__)
@@ -40,7 +43,7 @@ db = database_class.get_db()
 class LoginForm(FlaskForm):
     username = StringField('Username')
     password = PasswordField('Password')
-    submit = SubmitField('Submit')
+    submit = SubmitField('Login')
 
 # login
 
@@ -95,7 +98,6 @@ def load_user(user_id):
 # general
 
 @app.route("/")
-@cross_origin()
 def index():
   quizes = db.session.execute('select * from quizes;').fetchall()
   print('-----------------', quizes)
@@ -103,7 +105,6 @@ def index():
 
 
 @app.route('/quiz/<string:quizname>')
-@cross_origin()
 @login_required
 def quiz(quizname):
   questions = get_questions_with_answer_count(quizname)
@@ -180,7 +181,6 @@ def submit():
 
 
 @app.route('/profile')
-@cross_origin()
 def profile():
   if not current_user.is_authenticated:
     return redirect('/loginpage')
@@ -196,6 +196,19 @@ def profile():
 
   return render_template('profile.html', current_user=current_user, scores=quiz_names_and_scores)
 
+@app.route('/highscores')
+def highscores():
+  scores = get_all_scores()
+  quiz_user_score = []
+  for score in scores:
+    if score[0]:
+      username = get_username_by_id(score[0])
+      quizname = get_quiz_name(score[1])
+      quiz_user_score.append([quizname, username, score[2]])
+
+  print(quiz_user_score)
+  
+  return render_template('highscores.html', scores=quiz_user_score)
 
 # db functions
 
@@ -242,6 +255,11 @@ def get_scores(user_id):
   print('scores', scores)
   return scores
 
+def get_all_scores():
+  query = f"SELECT user_id, quiz_id, score FROM scores ORDER BY score DESC;"
+  scores = db.session.execute(query).fetchall()
+  return scores
+
 def get_quiz_name(quiz_id):
   query = f"SELECT name FROM quizes WHERE id={quiz_id};"
   print('finding name for', query)
@@ -256,3 +274,8 @@ def get_quiz_id_by_name(name):
   query = f"SELECT id FROM quizes WHERE name='{name}';"
   id = db.session.execute(query).fetchone()[0]
   return id 
+
+def get_username_by_id(id):
+  query = f"SELECT username FROM users WHERE id={id}"
+  username = db.session.execute(query).fetchone()[0]
+  return username

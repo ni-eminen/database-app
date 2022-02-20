@@ -13,6 +13,8 @@ class User(UserMixin):
   def get(user_id):
     # get user from database
     db_user = engine.execute(f"SELECT * FROM users WHERE id='{user_id}'").fetchone()
+    if not db_user:
+      return None
     user = User(db_user[1], db_user[0])
     return user
 
