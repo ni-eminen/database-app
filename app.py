@@ -1,5 +1,5 @@
 from curses import REPORT_MOUSE_POSITION
-from flask import Flask, redirect, render_template, request, jsonify, session
+from flask import Flask, flash, redirect, render_template, request, jsonify, session
 from urllib.parse import urlparse, urljoin
 import flask as flask
 from flask_sqlalchemy import SQLAlchemy
@@ -54,18 +54,20 @@ def login():
   username = request.form.get('username')
   password = request.form.get('password')
 
-  db_user = db.session.execute(f"select * from users where username='{username}';").fetchone()
+  db_user = db.session.execute(f"select id, username from users where username='{username}';").fetchone()
+  password_hash = db.session.execute(f"SELECT password FROM users WHERE username='{username}';").fetchone()
   
   if not db_user:
-    print('creating new user')
+    print('creating new user', username, password)
     user = create_user(username, password)
-  else:
-    user = User(db_user[1], db_user[0])
-
-
-
-
-
+    login_user(user)
+    return redirect('/')
+  
+  if not check_password_hash(password_hash[0], password):
+    flash('Username and password do not match')
+    return redirect('/loginpage')
+  
+  user = User(db_user[1], db_user[0])
   login_user(user)
   return redirect('/')
 
