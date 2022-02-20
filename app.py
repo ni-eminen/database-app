@@ -6,7 +6,6 @@ import flask as flask
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 import uuid
-from database import Database
 
 # flask plugins
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user 
@@ -19,12 +18,10 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 
-sys.path.insert(0, '/home/matias/codeprojects/tsoha/harkka/classes')
-
 # user classes
-from classes.questions import Questions
-from classes.question import Question
-from classes.user import User
+from questions import Questions
+from question import Question
+from user import User
 
 # app object
 app = Flask(__name__)
@@ -35,8 +32,7 @@ Bootstrap(app)
 login_manager.init_app(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 app.secret_key = getenv("SECRET_KEY")
-database_class = Database(app)
-db = database_class.get_db()
+db = SQLAlchemy(app)
 
 
 # LoginForm class
