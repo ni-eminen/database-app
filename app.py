@@ -26,7 +26,8 @@ from user import User
 # app object
 app = Flask(__name__)
 login_manager = LoginManager()
-CORS(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 Bootstrap(app)
 login_manager.init_app(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
@@ -94,6 +95,7 @@ def load_user(user_id):
 # general
 
 @app.route("/")
+@cross_origin()
 def index():
   quizes = db.session.execute('select * from quizes;').fetchall()
   print('-----------------', quizes)
@@ -101,6 +103,7 @@ def index():
 
 
 @app.route('/quiz/<string:quizname>')
+@cross_origin()
 @login_required
 def quiz(quizname):
   questions = get_questions_with_answer_count(quizname)
@@ -175,6 +178,7 @@ def submit():
 
 
 @app.route('/profile')
+@cross_origin()
 def profile():
   if not current_user.is_authenticated:
     return redirect('/loginpage')
