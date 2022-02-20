@@ -35,10 +35,11 @@ async function postData(url = '', data = {}) {
 
 }
 
-const submit = async () => {
-    const response = await postData('http://localhost:5000/quiz/submit', answers)
+const submit = async (url, scoreUrl) => {
+    console.log(url)
+    const response = await postData(url, answers)
     console.log('response', response)
-    window.location.replace(`http://localhost:5000/quiz/results/${response.id}`);
+    window.location.replace(`results/${response.id}`)
 }
 
 

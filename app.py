@@ -125,7 +125,7 @@ def quiz(quizname):
     qna.append(arr)
 
   return render_template('quiz.html', quizname=quizname, qna=qna, questions=questions, answers=answers, answerslen=len(answers),
-                          questionslen=len(questions))
+                          questionslen=len(questions), submit=flask.url_for('submit'))
 
 @app.route('/quiz/results/<string:id>')
 def result(id):
