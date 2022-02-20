@@ -4,7 +4,8 @@ from urllib.parse import urlparse, urljoin
 import flask as flask
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
-import random
+import uuid
+from database import Database
 
 # flask plugins
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user 
@@ -16,13 +17,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
 
 # user classes
-from Questions import Questions
-from Question import Question
-from User import User
+from questions import Questions
+from question import Question
+from user import User
 
+# app object
 app = Flask(__name__)
 login_manager = LoginManager()
 CORS(app)
@@ -30,7 +31,8 @@ Bootstrap(app)
 login_manager.init_app(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 app.secret_key = getenv("SECRET_KEY")
-db = SQLAlchemy(app)
+database_class = Database(app)
+db = database_class.get_db()
 
 
 # LoginForm class
@@ -52,13 +54,19 @@ def login():
   username = request.form.get('username')
   password = request.form.get('password')
 
-  user = db.session.execute(f"select * from users where username='{username}';").fetchone()
-  print('\n\n\n', user, '\n\n\n')
+  db_user = db.session.execute(f"select * from users where username='{username}';").fetchone()
+  
+  if not db_user:
+    print('creating new user')
+    user = create_user(username, password)
+  else:
+    user = User(db_user[1], db_user[0])
 
-  password_hash = generate_password_hash(password, method='sha256')
-  create_user(username, password)
 
-  print('success login:', login_user(User(request.form['username'])))
+
+
+
+  login_user(user)
   return redirect('/')
 
 @app.route("/logout")
@@ -91,6 +99,7 @@ def index():
 
 
 @app.route('/quiz/<string:quizname>')
+@login_required
 def quiz(quizname):
   questions = get_questions_with_answer_count(quizname)
   answers = get_answers(quizname)
@@ -115,14 +124,17 @@ def quiz(quizname):
 
 @app.route('/quiz/results/<string:id>')
 def result(id):
-  score = db.session.execute(f'select score from scores where id={id};').fetchone()[0]
-  return render_template('results.html', score = score)
+  score = db.session.execute(f'select score, quiz_id from scores where id={id};').fetchone()
+  print('scoreeeeeeeeeeeeeeeeeee',score)
+  name = get_quiz_name(score[1])
+  return render_template('results.html', score = score[0], name=name)
 
 
 @app.route('/quiz/submit', methods = ['POST', 'GET'])
 def submit():
   body = request.form
-  questions_answers = get_correct_answers(body['quizname'])
+  quizname = body['quizname']
+  questions_answers = get_correct_answers(quizname)
 
   # Add questions and correct answers to an object that is easily querable
   questions = Questions()
@@ -150,17 +162,30 @@ def submit():
       else:
           result_list.append((q, body[q], False))
 
-  print('requestrequestrequestrequestrequestrequestrequestrequestrequestrequestrequest \n\n')
-  print(result_list)
-  print('\n\nrequestrequestrequestrequestrequestrequestrequestrequestrequestrequestrequest')
-
+  quiz_id = get_quiz_id_by_name(quizname)
   # generate id for this quiz session
-  id = random.randint(1, 10000000)
-  print(id)
-  db.session.execute(f'INSERT INTO scores (id, score) VALUES ({id}, {score});')
+  response = db.session.execute(f"INSERT INTO scores (score, quiz_id, user_id) VALUES ({score}, {quiz_id}, {current_user.get_id()}) RETURNING id;")
+
   print('scores after insertr',db.session.execute('select * from scores;').fetchall())
   db.session.commit()
-  return jsonify(id=id)
+  return jsonify(id=response.fetchone()[0])
+
+
+@app.route('/profile')
+def profile():
+  if not current_user.is_authenticated:
+    return redirect('/loginpage')
+  
+  scores = get_scores(current_user.get_id())
+
+  quiz_names_and_scores = []
+  for score in scores:
+    name = get_quiz_name(score[3])
+    quiz_names_and_scores.append([name, score[2]])
+
+    print(quiz_names_and_scores)
+
+  return render_template('profile.html', current_user=current_user, scores=quiz_names_and_scores)
 
 
 # db functions
@@ -189,4 +214,36 @@ def get_choice_count_for_question(question_id):
   query = f"SELECT COUNT(*) FROM answers WHERE answer.id={question_id}"
 
 def create_user(username, password):
-  pass
+  password_hash = generate_password_hash(password, method='sha256')
+  query = f"INSERT INTO users (username, password) VALUES ('{username}', '{password_hash}');"
+  db.session.execute(query)
+  user_id = db.session.execute(f"SELECT id FROM users where username='{username}';").fetchone()[0]
+  db.session.commit()
+  return User.get(user_id)
+
+def get_user_id(username):
+  query = f"SELECT id FROM users WHERE username='{username}';"
+  id = db.session.execute(query).fetchone()[0]
+  print(id)
+  return id
+
+def get_scores(user_id):
+  query = f"SELECT * FROM scores WHERE user_id='{user_id}'"
+  scores = db.session.execute(query).fetchall()
+  print('scores', scores)
+  return scores
+
+def get_quiz_name(quiz_id):
+  query = f"SELECT name FROM quizes WHERE id={quiz_id};"
+  print('finding name for', query)
+  response = db.session.execute(query).fetchone()
+  if response:
+    name = response[0]
+  else:
+    name = 'no name found'
+  return name
+
+def get_quiz_id_by_name(name):
+  query = f"SELECT id FROM quizes WHERE name='{name}';"
+  id = db.session.execute(query).fetchone()[0]
+  return id 

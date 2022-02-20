@@ -1,4 +1,4 @@
-from Question import Question
+from question import Question
 class Questions:
     def __init__(self):
         self.questions = []

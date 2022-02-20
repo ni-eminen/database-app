@@ -1,4 +1,5 @@
-{% import 'header.html' as header %}
+{% from "macros.html" import header %}
+{% from "macros.html" import bootstrap_imports %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +9,11 @@
     <link rel="stylesheet" href="../static/quiz.css">
     <script src="../static/quiz.js"></script>
     <script src="{{ url_for('static', filename='jquery-3.6.0.slim.min.js') }}"></script>
+    {{bootstrap_imports()}}
     <title>{{quizname}}</title>
 </head>
 <body>
-    {{ header.header(quizname) }}
+    {{header("Frontpage", current_user)}}
     <div class="quiz">
         {%for i in range(0, qna|length)%}
                 <div class="question">
