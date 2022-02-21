@@ -1,7 +1,9 @@
-from flask_login import UserMixin, LoginManager
-from os import getenv
+from flask_login import UserMixin
+import os
 from sqlalchemy import create_engine
-engine = create_engine(getenv("DATABASE_URL"))
+
+print(os.environ)
+engine = create_engine(os.getenv("DATABASE_URL"))
 
 class User(UserMixin):
   def __init__(self, username, id):

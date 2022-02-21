@@ -3,10 +3,18 @@ Quiz app for University of Helsinki's database project course.
 
 [heroku](https://matoskni-database.herokuapp.com/)
 
-## Functionalities (to be)
+## Notes:
+- Login before opening quizs.
+
+## Functionalities
 - Create a user
-- Selection of Quiz's
+- Login
+- Selection of Quizs
+- Highscores
 - Highscore tracking both global and user based
+
+## Functionalities to be
+- Users will be able to create new quizs
 
 ## Install & run
 

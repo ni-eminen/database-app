@@ -1,11 +1,11 @@
 import sys
+import os
 from curses import REPORT_MOUSE_POSITION
 from flask import Flask, flash, redirect, render_template, request, jsonify, session
 from urllib.parse import urlparse, urljoin
 import flask as flask
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
-import uuid
 
 # flask plugins
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user 
@@ -15,13 +15,17 @@ from flask_bootstrap import Bootstrap
 # user authentication
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# forms
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 
+
+sys.path.append(f"{os.path.dirname(os.path.abspath(__file__))}/classes")
+
 # user classes
-from questions import Questions
-from question import Question
-from user import User
+from classes.questions import Questions
+from classes.question import Question
+from classes.user import User
 
 # app object
 app = Flask(__name__)
