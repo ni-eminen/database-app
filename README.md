@@ -4,7 +4,7 @@ Quiz app for University of Helsinki's database project course.
 [heroku](https://matoskni-database.herokuapp.com/)
 
 ## Notes:
-- Login before opening quizs.
+- Login before opening quizs. A new user will be created when you login for the first time. If the username is taken, you will be met with an error message.
 
 ## Functionalities
 - Create a user
