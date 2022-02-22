@@ -2,7 +2,7 @@ from flask_login import UserMixin
 import os
 from sqlalchemy import create_engine
 
-print(os.environ)
+# print(os.environ)
 engine = create_engine(os.getenv("DATABASE_URL"))
 
 class User(UserMixin):

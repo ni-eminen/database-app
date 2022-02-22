@@ -7,6 +7,7 @@ import flask as flask
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 
+
 # flask plugins
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user 
 from flask_cors import CORS, cross_origin
@@ -20,12 +21,17 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 
 
-sys.path.append(f"{os.path.dirname(os.path.abspath(__file__))}/classes")
+# sys.path.append(f"{os.path.dirname(os.path.abspath(__file__))}/classes")
 
 # user classes
-from classes.questions import Questions
-from classes.question import Question
-from classes.user import User
+# from classes.questions import Questions
+# from classes.question import Question
+# from classes.user import User
+
+import classes.question as question
+import classes.questions as questions
+import classes.user as user
+
 
 # app object
 app = Flask(__name__)
@@ -71,7 +77,7 @@ def login():
     flash('Username and password do not match')
     return redirect('/loginpage')
   
-  user = User(db_user[1], db_user[0])
+  user = user.User(db_user[1], db_user[0])
   login_user(user)
   return redirect('/')
 
@@ -92,7 +98,7 @@ def is_safe_url(target):
 
 @login_manager.user_loader
 def load_user(user_id):
-  return User.get(user_id)
+  return user.User.get(user_id)
 
 
 # general
@@ -144,26 +150,26 @@ def submit():
   questions_answers = get_correct_answers(quizname)
 
   # Add questions and correct answers to an object that is easily querable
-  questions = Questions()
+  questions_ = questions.Questions()
   for qna in questions_answers:
-      q = Question(qna[0])
+      q = question.Question(qna[0])
       q.add_answer(qna[1])
-      questions.add_question(q)
+      questions_.add_question(q)
 
   # Create an array of type [(question, given answer, correct or not)]
   result_list = []
   answer_list = []
   score = 0
-  for question in questions_answers:
+  for question_ in questions_answers:
       # Duplicate answers sometimes result from multiple correct answers, skip them via this statement
-      q = question[0] # question
+      q = question_[0] # question
       a = body[q]     # answer
       if a in answer_list:
           continue
 
       answer_list.append(a)
 
-      if questions.is_correct(q, body[q]):
+      if questions_.is_correct(q, body[q]):
           result_list.append((q, body[q], True))
           score = score + 1
       else:
@@ -241,7 +247,7 @@ def create_user(username, password):
   db.session.execute(query)
   user_id = db.session.execute(f"SELECT id FROM users where username='{username}';").fetchone()[0]
   db.session.commit()
-  return User.get(user_id)
+  return user.User.get(user_id)
 
 def get_user_id(username):
   query = f"SELECT id FROM users WHERE username='{username}';"
