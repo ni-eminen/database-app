@@ -62,12 +62,13 @@ def login():
 
     if not db_user:
         print('creating new user', username, password)
+        flash(f"new user created: {username}", 'success')
         user = create_user(username, password)
         login_user(user)
         return redirect('/')
 
     if not check_password_hash(password_hash[0], password):
-        flash('Username and password do not match')
+        flash('Username and password do not match', 'danger')
         return redirect('/loginpage')
 
     user = User(db_user[1], db_user[0])
@@ -110,9 +111,12 @@ def index():
 
 
 @app.route('/quiz/<string:quizname>')
-@login_required
 def quiz(quizname):
     """quiz router"""
+    if not current_user.is_authenticated:
+        flash('Login before completing quizzes!', 'info')
+        return redirect('/loginpage')
+
     questions = get_questions_with_answer_count(quizname)
     answers = get_answers(quizname)
 

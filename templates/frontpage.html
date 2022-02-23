@@ -5,14 +5,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="../static/frontpage.js"></script>
     {{ bootstrap_imports() }}
+    <script src="../static/frontpage.js"></script>
     <link rel="stylesheet" href="../static/frontpage.css">
     <title>Quizbase</title>
 </head>
 <body>
     {{header("Frontpage", current_user)}}
     <div id='content-div'>
+        <div class="messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="list-group" class="alert">
+                {% for category, message in messages %}
+                    <li class="list-group-item list-group-item-{{category}} mt-2">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %} 
+        </div>
         {%for i in range(0, len)%}
             <div id='quizList'>
                 <a href="/quiz/{{quizes[i][3]}}">
@@ -29,5 +40,10 @@
             </div>
         {%endfor%}
     </div>
+    <script>
+        window.setTimeout(function() {
+            $('.messages').addClass('hide')
+        }, 4000);
+    </script>
 </body>
 </html>

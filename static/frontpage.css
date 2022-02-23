@@ -18,6 +18,10 @@ a:hover {
     text-decoration: inherit;
 }
 
+.hide {
+    display: none;
+}
+
 #content-div {
     width: 640px;
     margin: 0 auto;

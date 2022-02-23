@@ -11,11 +11,11 @@
   {{ header('Login', current_user) }}
   <form action="/login" method=post>
       <div class="container">
-      {% with messages = get_flashed_messages() %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           <ul class="list-group">
-          {% for message in messages %}
-            <li class="list-group-item list-group-item-danger mt-2">{{ message }}</li>
+          {% for category, message in messages %}
+            <li class="list-group-item list-group-item-{{category}} mt-2">{{ message }}</li>
           {% endfor %}
           </ul>
         {% endif %}
