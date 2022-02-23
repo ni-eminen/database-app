@@ -26,7 +26,8 @@ def get_questions_with_answer_count(quizname):
 
     questions_query = f"select questions.question_string, questions.id \
       from quizes, questions where quizes.name='{quizname}' and questions.quiz_id=quizes.id;"
-    return engine.execute(questions_query).fetchall()
+    result = engine.execute(questions_query).fetchall()
+    return result
 
 
 def get_correct_answers(quizname):

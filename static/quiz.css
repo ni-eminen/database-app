@@ -19,10 +19,11 @@ h1 {
 }
 
 .quiz {
-    width: 640px;
+    max-width: 800px;
     margin: 0 auto;
     display: block;
     text-align: center;
+    padding: 1em;
 }
 
 .question {
@@ -38,7 +39,7 @@ h1 {
 }
 
 .choice {
-    margin: 1em auto;
+    margin: 1em 1em;
     display: block;
     max-width: 100%;
     text-align: center;
@@ -58,6 +59,7 @@ h1 {
     width: 100%;
     padding: .5em 1em;
     background-color: black;
+    height: 4em;
 }
 
 #submitButton {

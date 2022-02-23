@@ -23,10 +23,11 @@ a:hover {
 }
 
 #content-div {
-    max-width: 640px;
+    max-width: 800px;
     margin: 0 auto;
     display: block;
     text-align: center;
+    padding: 1em;
 }
 
 h1 {

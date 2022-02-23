@@ -99,18 +99,28 @@ def add_new_quiz():
     quiz_id = add_quiz(body['name'], body['description'])
     current_question_id = 0
 
+    print('\n\n\n\n\n')
     for item in body:
-        print(item)
+        print(item, '=', body[item])
+    print('\n\n\n\n\n')
 
     loop_idx = 0
+    latest_answer = ''
     for item in body:
         loop_idx += 1
         if loop_idx < 3:
             continue
         if item[0] == 'q':
             current_question_id = add_question(quiz_id, body[item])
+        elif item[0] == 'a':
+            latest_answer = body[item]
         else:
-            add_answer(current_question_id, body[item], 1)
+            if body[item] == 'True':
+                is_correct = 1
+            else:
+                print('tiem: ', item, 'body[item]', body[item])
+                is_correct = 0
+            add_answer(current_question_id, latest_answer, is_correct)
 
     return redirect('/')
 
@@ -155,12 +165,13 @@ def quiz(quizname):
         return render_template('quiz_not_ready.html', quizname=quizname)
 
     print(questions)
+    print(answers)
     # qna will be and array of arrays, each sub array represents a question
     # and its answers, each node in string format
     qna = []
 
     # for each question, add the question_string into an array, then append that array
-    # with the questions that have the appropriate question id
+    # with the answers that have the appropriate question id
     for ques in questions:
         arr = [ques[0]]
         for ans in answers:
