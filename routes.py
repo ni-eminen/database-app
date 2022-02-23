@@ -164,7 +164,7 @@ def submit():
   response = engine.execute(f"INSERT INTO scores (score, quiz_id, user_id) VALUES ({score}, {quiz_id}, {current_user.get_id()}) RETURNING id;")
 
   print('scores after insertr',engine.execute('select * from scores;').fetchall())
-  engine.commit()
+  # engine.commit()
   response = jsonify(id=response.fetchone()[0])
   response.headers.add('Access-Control-Allow-Origin', '*')
   return response

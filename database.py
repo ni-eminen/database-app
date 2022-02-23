@@ -37,7 +37,7 @@ def create_user(username, password):
   query = f"INSERT INTO users (username, password) VALUES ('{username}', '{password_hash}');"
   engine.execute(query)
   user_id = engine.execute(f"SELECT id FROM users where username='{username}';").fetchone()[0]
-  engine.commit()
+  # engine.commit()
   return User.get(user_id)
 
 def get_user_id(username):
