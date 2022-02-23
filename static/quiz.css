@@ -1,0 +1,123 @@
+html {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+#topbar {
+    background-color: #ff928f;
+    height: 3em;
+}
+
+.quiz {
+    width: 640px;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
+.question {
+    margin: 2em 0 1em 0;
+    max-width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 3px 6px 5px 5px #888888;
+    padding: 1em 1em;
+    overflow: hidden;
+    transition: all .1s ease-in-out;
+    background-color: rgb(49, 231, 49);
+}
+
+.choice {
+    margin: 1em auto;
+    display: block;
+    max-width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 3px 6px 5px 5px #888888;
+    padding: .5em 1em;
+    overflow: hidden;
+    transition: all .1s ease-in-out;
+    background-color: rgb(65, 183, 223);
+}
+.choice:hover {
+    transform: scale(1.025);
+    cursor: pointer;
+}
+
+#submitButton {
+    width: 100%;
+    padding: .5em 1em;
+    background-color: black;
+}
+
+#submitButton {
+    background-color: #0095ff;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.15385;
+    margin: 0;
+    outline: none;
+    padding: 8px .8em;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    white-space: nowrap;
+    margin: .5em 0;
+}
+
+#submitButton:hover {
+    background-color: #07c;
+}
+
+#submitButton:focus {
+    box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+}
+
+#submitButton:active {
+    background-color: #0064bd;
+    box-shadow: none;
+}
+
+.radio {
+    margin: 1em auto;
+    display: block;
+    max-width: 100%;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 3px 6px 5px 5px #888888;
+    padding: .5em 1em;
+    overflow: hidden;
+    transition: all .1s ease-in-out;
+    background-color: rgb(65, 183, 223);
+}
+
+.radio.selected{
+    background-color: rgb(0, 95, 173);
+}
+
+.radio:hover {
+    transform: scale(1.025);
+    cursor: pointer;
+}

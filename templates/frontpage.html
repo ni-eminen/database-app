@@ -1,0 +1,33 @@
+{% from "macros.html" import header, bootstrap_imports %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../static/frontpage.js"></script>
+    {{ bootstrap_imports() }}
+    <link rel="stylesheet" href="../static/frontpage.css">
+    <title>Quizbase</title>
+</head>
+<body>
+    {{header("Frontpage", current_user)}}
+    <div id='content-div'>
+        {%for i in range(0, len)%}
+            <div id='quizList'>
+                <a href="/quiz/{{quizes[i][3]}}">
+                    <div class='quizCard' onclick="openQuiz('/quiz/{{quizes[i][3]}}')">
+                        <div class='quizImgWrapper'>
+                            <img class='quizImg' src="https://media.istockphoto.com/vectors/flat-icon-check-vector-id496603666?k=20&m=496603666&s=170667a&w=0&h=QOfI-aqzv1dEamb2evpWUvKkukJwtH4YRF_Ugwksk6Y=" alt="">
+                        </div>
+                        <div class='quizCardTextWrapper'>
+                            <h2>{{quizes[i][1]}}</h2>
+                            <p class='textContent'>{{quizes[i][2]}}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {%endfor%}
+    </div>
+</body>
+</html>

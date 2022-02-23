@@ -1,0 +1,30 @@
+{% from "macros.html" import header, bootstrap_imports %}
+<!DOCTYPE html>   
+<html>   
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+<title> Login Page </title>  
+{{ bootstrap_imports() }}
+<link rel="stylesheet" href="../static/login.css">
+</head>    
+<body>    
+  {{ header('Login', current_user) }}
+  <form action="/login" method=post>
+      <div class="container">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <ul class="list-group">
+          {% for message in messages %}
+            <li class="list-group-item list-group-item-danger mt-2">{{ message }}</li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %} 
+        <h1>Login</h1>
+        {{form.username}}
+        {{form.password}}
+        {{form.submit}}
+      </div>   
+  </form>     
+</body>     
+</html>  

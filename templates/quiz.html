@@ -1,0 +1,54 @@
+{% from "macros.html" import header %}
+{% from "macros.html" import bootstrap_imports %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/quiz.css">
+    <script src="../static/quiz.js"></script>
+    <script src="{{ url_for('static', filename='jquery-3.6.0.slim.min.js') }}"></script>
+    {{bootstrap_imports()}}
+    <title>{{quizname}}</title>
+</head>
+<body>
+    {{header("Frontpage", current_user)}}
+    <div class="quiz">
+        {%for i in range(0, qna|length)%}
+                <div class="question">
+                    <h1>
+                        {{qna[i][0]}}
+                    </h1>
+                </div>
+                <form>
+                <div class="radio-group">
+                        {%for j in range(0, (qna[i]|length) - 1)%}
+                        <div onclick="answer('{{qna[i][0]}}', '{{qna[i][j+1]}}');" class="radio">
+                            <h3>{{qna[i][j+1]}}</h3>
+                        </div>
+                        {%endfor%}
+                </div>
+                </form>
+        {%endfor%}
+        <a>
+            <button onclick="submit('{{submit}}')" id='submitButton'>
+                Submit!
+            </button>
+        </a>
+    </div>
+    <script>
+        setQuizName('{{quizname}}')
+        console.log('test');
+
+        $('.radio-group .radio').click(function(){
+        $(this).parent().find('.radio').removeClass('selected');
+        $(this).addClass('selected');
+        // var val = $(this).attr('data-value');
+        // //alert(val);
+        // $(this).parent().find('input').val(val);
+    });
+    </script>
+
+</body>
+</html>
