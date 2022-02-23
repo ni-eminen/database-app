@@ -23,9 +23,9 @@ def get_questions(quizname):
 
 def get_questions_with_answer_count(quizname):
     """Gets questions with how many answers there are to each question"""
-    questions_query = f"select questions.question_string, questions.id, count(*) \
-      from quizes, questions, answers where questions.id=answers.question_id \
-      and quizes.name='{quizname}' group by questions.question_string, questions.id;"
+
+    questions_query = f"select questions.question_string, questions.id \
+      from quizes, questions where quizes.name='{quizname}' and questions.quiz_id=quizes.id;"
     return engine.execute(questions_query).fetchall()
 
 
@@ -103,3 +103,20 @@ def get_username_by_id(user_id):
     query = f"SELECT username FROM users WHERE id={user_id}"
     username = engine.execute(query).fetchone()[0]
     return username
+
+def add_question(quiz_id, question_string):
+  """adds a new question"""
+  query = f"insert into questions (question_string, quiz_id) \
+    values ('{question_string}', {quiz_id}) RETURNING id;"
+  return engine.execute(query).fetchone()[0]
+
+
+def add_quiz(quiz_name, quiz_description):
+  query = f"insert into quizes (name, description, url) values \
+    ('{quiz_name}', '{quiz_description}', '{quiz_name.replace(' ', '').replace('/', '')}') RETURNING id;"
+  quiz_id = engine.execute(query).fetchone()[0]
+  return quiz_id
+
+def add_answer(question_id, answer_string, is_correct):
+  query = f"insert into answers (answer_string, question_id, is_correct) values ('{answer_string}', {question_id}, {is_correct});"
+  engine.execute(query)

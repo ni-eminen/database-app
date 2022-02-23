@@ -22,7 +22,7 @@ from question import Question
 from user import User
 from database import  get_correct_answers, create_user, get_questions_with_answer_count,\
                       get_answers, get_quiz_name, get_quiz_id_by_name, get_all_scores, get_scores,\
-                      get_username_by_id
+                      get_username_by_id, add_question, add_quiz, add_answer
 
 from app import app, login_manager
 
@@ -82,7 +82,38 @@ def logout():
     """Logs user out"""
     print(current_user.is_authenticated)
     logout_user()
+    flash('logged out successfully', 'info')
     return redirect('/')
+
+@app.route("/new_quiz")
+def new_quiz():
+    if not current_user.is_authenticated:
+        flash('Login before creating quizzes!', 'info')
+        return redirect('/loginpage')
+    
+    return render_template('new_quiz.html')
+
+@app.route("/add_new_quiz", methods=["POST"])
+def add_new_quiz():
+    body = request.form
+    quiz_id = add_quiz(body['name'], body['description'])
+    current_question_id = 0
+
+    for item in body:
+        print(item)
+
+    loop_idx = 0
+    for item in body:
+        loop_idx += 1
+        if loop_idx < 3:
+            continue
+        if item[0] == 'q':
+            current_question_id = add_question(quiz_id, body[item])
+        else:
+            add_answer(current_question_id, body[item], 1)
+
+    return redirect('/')
+
 
 
 def is_safe_url(target):
@@ -123,6 +154,7 @@ def quiz(quizname):
     if len(questions) == 0:
         return render_template('quiz_not_ready.html', quizname=quizname)
 
+    print(questions)
     # qna will be and array of arrays, each sub array represents a question
     # and its answers, each node in string format
     qna = []
