@@ -107,6 +107,7 @@ def get_username_by_id(user_id):
 
 def add_question(quiz_id, question_string):
   """adds a new question"""
+  question_string = question_string.replace("'", "").replace('"', '')
   query = f"insert into questions (question_string, quiz_id) \
     values ('{question_string}', {quiz_id}) RETURNING id;"
   return engine.execute(query).fetchone()[0]
@@ -114,7 +115,7 @@ def add_question(quiz_id, question_string):
 
 def add_quiz(quiz_name, quiz_description):
   query = f"insert into quizes (name, description, url) values \
-    ('{quiz_name}', '{quiz_description}', '{quiz_name.replace(' ', '').replace('/', '')}') RETURNING id;"
+    ('{quiz_name}', '{quiz_description}', '{quiz_name.replace('/', '').replace(' ', '-')}') RETURNING id;"
   quiz_id = engine.execute(query).fetchone()[0]
   return quiz_id
 

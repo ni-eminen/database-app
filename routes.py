@@ -151,18 +151,19 @@ def index():
                            len=len(quizes), current_user=current_user)
 
 
-@app.route('/quiz/<string:quizname>')
-def quiz(quizname):
+@app.route('/quiz/<string:quiz_url>')
+def quiz(quiz_url):
     """quiz router"""
     if not current_user.is_authenticated:
         flash('Login before completing quizzes!', 'info')
         return redirect('/loginpage')
 
+    quizname = engine.execute(f"select name from quizes where url='{quiz_url}';").fetchone()[0]
     questions = get_questions_with_answer_count(quizname)
     answers = get_answers(quizname)
 
     if len(questions) == 0:
-        return render_template('quiz_not_ready.html', quizname=quizname)
+        return render_template('quiz_not_ready.html', quizname=quiz_url)
 
     print(questions)
     print(answers)
@@ -181,7 +182,7 @@ def quiz(quizname):
 
     return render_template(
         'quiz.html',
-        quizname=quizname,
+        quizname=quiz_url,
         qna=qna,
         questions=questions,
         answers=answers,
@@ -205,8 +206,9 @@ def result(result_id):
 def submit():
     """Submits results and redirects to result page"""
     body = request.form
-    quizname = body['quizname']
-    questions_answers = get_correct_answers(quizname)
+    quiz_url = body['quizname']
+    quizname = engine.execute(f"select name from quizes where url='{quiz_url}'").fetchone()[0]
+    questions_answers = get_correct_answers(quiz_url)
 
     # Add questions and correct answers to an object that is easily querable
     questions_ = Questions()
