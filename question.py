@@ -9,7 +9,8 @@ class Question:
     def question(self):
         return self.question_string
 
-    # return True if the answer_candidate is found within the answers for this question
+    # return True if the answer_candidate is found within the answers for this
+    # question
     def is_correct(self, answer_candidate):
         for answer in self.answers:
             if answer == answer_candidate:
