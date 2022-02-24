@@ -221,6 +221,12 @@ def submit():
     result_list = []
     answer_list = []
     score = 0
+    print()
+    print()
+    print()
+    print()
+    print()
+    print('questions_answers', questions_answers)
     for question_ in questions_answers:
         ques = question_[0]  # question
         ans = body[ques]     # answer
@@ -238,6 +244,7 @@ def submit():
             result_list.append((ques, ans, False))
 
     quiz_id = get_quiz_id_by_name(quizname)
+
     # generate id for this quiz session
     response = engine.execute(
         f"INSERT INTO scores (score, quiz_id, user_id) \

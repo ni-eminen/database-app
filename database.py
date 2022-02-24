@@ -115,9 +115,13 @@ def add_question(quiz_id, question_string):
 
 def add_quiz(quiz_name, quiz_description):
   query = f"insert into quizes (name, description, url) values \
-    ('{quiz_name}', '{quiz_description}', '{quiz_name.replace('/', '').replace(' ', '-')}') RETURNING id;"
+    ('{quiz_name}', '{quiz_description}', '{generate_url(quiz_name)}') RETURNING id;"
   quiz_id = engine.execute(query).fetchone()[0]
   return quiz_id
+
+def generate_url(name):
+  # removes all special characters and spaces
+  return ''.join(e for e in name if e.isalnum())
 
 def add_answer(question_id, answer_string, is_correct):
   query = f"insert into answers (answer_string, question_id, is_correct) values ('{answer_string}', {question_id}, {is_correct});"
