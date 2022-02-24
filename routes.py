@@ -208,7 +208,7 @@ def submit():
     body = request.form
     quiz_url = body['quizname']
     quizname = engine.execute(f"select name from quizes where url='{quiz_url}'").fetchone()[0]
-    questions_answers = get_correct_answers(quiz_url)
+    questions_answers = get_correct_answers(quizname)
 
     # Add questions and correct answers to an object that is easily querable
     questions_ = Questions()
@@ -222,20 +222,20 @@ def submit():
     answer_list = []
     score = 0
     for question_ in questions_answers:
-        # Duplicate answers sometimes result from multiple correct answers,
-        # skip them via this statement
         ques = question_[0]  # question
         ans = body[ques]     # answer
-        if ans in answer_list:
+        # Duplicate answers sometimes result from multiple correct answers,
+        # skip them via this statement
+        if [ques, ans] in answer_list:
             continue
 
-        answer_list.append(ans)
+        answer_list.append([ques, ans])
 
-        if questions_.is_correct(ques, body[ques]):
-            result_list.append((ques, body[ques], True))
+        if questions_.is_correct(ques, ans):
+            result_list.append((ques, ans, True))
             score = score + 1
         else:
-            result_list.append((ques, body[ques], False))
+            result_list.append((ques, ans, False))
 
     quiz_id = get_quiz_id_by_name(quizname)
     # generate id for this quiz session
