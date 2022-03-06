@@ -61,9 +61,9 @@ def login():
         flash('username is too short', 'info')
         return redirect('/loginpage')
     
-    if not re.fullmatch(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", password):
+    if not re.fullmatch(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$", password):
         flash('invalid password', 'info')
-        flash('Password must be at least eight characters long, at least one letter and one number', 'info')
+        flash('Password must be 6-20 characters long, at least one letter, one number and one special character.', 'info')
         return redirect('/loginpage')
 
     db_user = engine.execute(
