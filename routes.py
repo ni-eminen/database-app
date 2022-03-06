@@ -256,10 +256,12 @@ def submit():
 
     quiz_id = get_quiz_id_by_name(quizname)
 
+    current_id = current_user.get_id()
+
     # generate id for this quiz session
     response = engine.execute(
-        f"INSERT INTO scores (score, quiz_id, user_id) \
-          VALUES ({score}, {quiz_id}, {current_user.get_id()}) RETURNING id;")
+        "INSERT INTO scores (score, quiz_id, user_id) \
+          VALUES (%(score)s, %(quiz_id)s, %(current_id)s) RETURNING id;", {"score": score, "quiz_id": quiz_id, "current_id": current_id})
 
     print('scores after insertr', engine.execute(
         'select * from scores;').fetchall())
