@@ -49,18 +49,17 @@ def get_answers(quizname):
 def create_user(username, password):
     """Creates a new user"""
     password_hash = generate_password_hash(password, method='sha256')
-    query = f"INSERT INTO users (username, password) VALUES ('{username}', '{password_hash}');"
-    engine.execute(query)
+    engine.execute("""INSERT INTO users (username, password) VALUES(%(username)s, %(password_hash)s);""", {"username": username, "password_hash": password_hash})
     user_id = engine.execute(
-        f"SELECT id FROM users where username='{username}';").fetchone()[0]
+        "SELECT id FROM users where username=%(username)s;", {"username": username}).fetchone()[0]
     # engine.commit()
     return User.get(user_id)
 
 
 def get_user_id(username):
     """gets a user id by username"""
-    query = f"SELECT id FROM users WHERE username='{username}';"
-    user_id = engine.execute(query).fetchone()[0]
+    query = f"SELECT id FROM users WHERE username=%(username)s;"
+    user_id = engine.execute(query, {"username": username}).fetchone()[0]
     print(user_id)
     return user_id
 
@@ -94,8 +93,8 @@ def get_quiz_name(quiz_id):
 
 def get_quiz_id_by_name(name):
     """gets quiz id by its name"""
-    query = f"SELECT id FROM quizes WHERE name='{name}';"
-    quiz_id = engine.execute(query).fetchone()[0]
+    query = f"SELECT id FROM quizes WHERE name=%(name)s;"
+    quiz_id = engine.execute(query, {"name": name}).fetchone()[0]
     return quiz_id
 
 
@@ -108,15 +107,16 @@ def get_username_by_id(user_id):
 def add_question(quiz_id, question_string):
   """adds a new question"""
   question_string = question_string.replace("'", "").replace('"', '')
-  query = f"insert into questions (question_string, quiz_id) \
-    values ('{question_string}', {quiz_id}) RETURNING id;"
-  return engine.execute(query).fetchone()[0]
+  query = "insert into questions (question_string, quiz_id) \
+    values (%(question_string)s, %(quiz_id)s) RETURNING id;"
+  return engine.execute(query, {"question_string": question_string, "quiz_id": quiz_id}).fetchone()[0]
 
 
 def add_quiz(quiz_name, quiz_description):
-  query = f"insert into quizes (name, description, url) values \
-    ('{quiz_name}', '{quiz_description}', '{generate_url(quiz_name)}') RETURNING id;"
-  quiz_id = engine.execute(query).fetchone()[0]
+  url = generate_url(quiz_name)
+  query = "insert into quizes (name, description, url) values \
+    (%(quiz_name)s, %(quiz_description)s, %(url)s) RETURNING id;"
+  quiz_id = engine.execute(query, {"quiz_name": quiz_name, "quiz_description": quiz_description, "url": url}).fetchone()[0]
   return quiz_id
 
 def generate_url(name):
@@ -124,5 +124,5 @@ def generate_url(name):
   return ''.join(e for e in name if e.isalnum())
 
 def add_answer(question_id, answer_string, is_correct):
-  query = f"insert into answers (answer_string, question_id, is_correct) values ('{answer_string}', {question_id}, {is_correct});"
-  engine.execute(query)
+  query = "insert into answers (answer_string, question_id, is_correct) values (%(answer_string)s, %(question_id)s, %(is_correct)s);"
+  engine.execute(query, {"answer_string": answer_string, "question_id": question_id, "is_correct": is_correct})

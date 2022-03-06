@@ -5,6 +5,9 @@ from flask import flash, redirect, render_template, request, jsonify
 import flask
 from sqlalchemy import create_engine
 
+# re
+import re
+
 # flask plugins
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_cors import cross_origin
@@ -44,8 +47,7 @@ class LoginForm(FlaskForm):
 @app.route('/loginpage', methods=['GET', 'POST'])
 def login_page():
     """Login page router, user will login on this page"""
-    form = LoginForm()
-    return flask.render_template('login.html', form=form)
+    return flask.render_template('login.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -55,10 +57,19 @@ def login():
     username = request.form.get('username')
     password = request.form.get('password')
 
+    if len(username) < 3:
+        flash('username is too short', 'info')
+        return redirect('/loginpage')
+    
+    if not re.fullmatch(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", password):
+        flash('invalid password', 'info')
+        flash('Password must be at least eight characters long, at least one letter and one number', 'info')
+        return redirect('/loginpage')
+
     db_user = engine.execute(
-        f"select id, username from users where username='{username}';").fetchone()
+        "select id, username from users where username=%(username)s;", {"username":username} ).fetchone()
     password_hash = engine.execute(
-        f"SELECT password FROM users WHERE username='{username}';").fetchone()
+        "SELECT password FROM users WHERE username=%(username)s;", {"username": username}).fetchone()
 
     if not db_user:
         print('creating new user', username, password)
