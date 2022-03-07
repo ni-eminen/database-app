@@ -63,7 +63,7 @@ def login():
     
     if not re.fullmatch(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$", password):
         flash('invalid password', 'info')
-        flash('Password must be 6-20 characters long, at least one letter, one number and one special character.', 'info')
+        flash('Password must be 6-20 characters long, contain at least one capital letter, one number and one special character.', 'info')
         return redirect('/loginpage')
 
     db_user = engine.execute(
